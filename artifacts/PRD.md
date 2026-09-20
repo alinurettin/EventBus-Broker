@@ -1,4 +1,4 @@
-﻿# ğŸ“Š Product Requirements Document (PRD): EventBus-Broker
+﻿# 📊 Product Requirements Document (PRD): EventBus-Broker
 - **Project:** EventBus-Broker
 - **Author:** Expert Business Analyst
 - **Status:** APPROVED & COMPLETE

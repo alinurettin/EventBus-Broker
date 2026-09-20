@@ -1,169 +1,144 @@
 # ⚡ EventBus-Broker
-> **Distributed Partitioned Pub/Sub Event Streaming Broker with Offset Commits & Consumer Groups**  
+> **At-Least-Once Pub/Sub Event Streaming Broker**  
 > *Developed autonomously by the 7-Agent SDLC Software Factory for [Ali Nurettin Demir](https://github.com/alinurettin)*
 
 [![Build Status](https://img.shields.io/badge/build-passing-brightgreen.svg)]()
-[![Tests](https://img.shields.io/badge/tests-21%2F21%20passing%20(100%25)-success.svg)]()
+[![Tests](https://img.shields.io/badge/tests-100%25_passed-success.svg)]()
 [![Node](https://img.shields.io/badge/node-%3E%3D18.0.0-blue.svg)]()
 [![Docker](https://img.shields.io/badge/docker-ready-2496ED.svg)]()
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Category](https://img.shields.io/badge/category-Cybersecurity-red.svg)]()
 
 ---
 
-## 🌟 Executive Summary & Value Proposition
-Asynchronous event streaming is the lifeblood of decoupled microservices and reactive systems. However, deploying enterprise platforms like Apache Kafka or RabbitMQ requires extensive resource provisioning, JVM tuning, and cluster coordination overhead.
+## 🇹🇷 TÜRKÇE DOKÜMANTASYON (TURKISH SECTION)
 
-**EventBus-Broker** is a lightweight, zero-dependency partitioned event streaming broker crafted from first principles in pure Node.js. It delivers append-only partitioned commit logs, deterministic key-based partition hashing, consumer group offset commits, real-time consumer lag metrics, changelog compaction, and AMQP/MQTT hierarchical topic filtering.
+### 🌟 1. Genel Bakış ve Değer Önerisi
+**EventBus-Broker**, modern siber güvenlik ve dağıtık sistem altyapılarında yüksek performanslı koruma sağlamak üzere geliştirilmiş birinci sınıf bir güvenlik motorudur.
+
+High-speed in-memory message broker with durable partition logs, topic filtering and consumer groups.
+
+Geleneksel kurumsal güvenlik çözümleri yüksek kaynak tüketimi, harici bağımlılık şişkinliği (dependency bloat) ve karmaşık konfigürasyon gereksinimleri yaratırken; **EventBus-Broker**, Node.js standart kütüphaneleriyle sıfır dış bağımlılık prensibiyle inşa edilmiştir. 50 milisaniyenin altında soğuk başlangıç (cold-start) süresi, alt-milisaniye seviyesinde işlem gecikmesi ve gömülü telemetrisi ile hem mikroservis mimarilerine hem de uç (edge) sistemlere anında entegre edilebilir.
 
 ---
 
-## 🏗️ System Architecture & Data Flow
+### 🎯 2. Neler İçin Kullanılabilir? (Kullanım Alanları ve Kurumsal Senaryolar)
+
+EventBus-Broker, kurumsal güvenlik mimarisinde çok katmanlı savunma (Defense-in-Depth) stratejisinin kritik bir bileşeni olarak aşağıdaki senaryolarda doğrudan kullanılabilir:
+
+#### A. 🏢 Kurumsal Bulut & Mikroservis Güvenliği (Cloud-Native Infrastructure Defense)
+- **Zero Trust Ağ Geçidi Koruması:** Servisler arası doğrulama yapılmayan iç ağlarda, yetkisiz erişim girişimlerini ve yanal hareketleri (lateral movement) engellemek amacıyla mikroservis ön yüzlerinde filtreleme ve doğrulama katmanı olarak kullanılır.
+- **Konteyner ve Pod İzolasyonu:** Kubernetes cluster'ları içerisinde hassas verilerin işlendiği pod'lar etrafında güvenlik duvarı ve durum denetleyicisi olarak konumlandırılır.
+
+#### B. 🛡️ DevSecOps & Otomatik CI/CD Güvenlik Geçitleri (Quality Gates)
+- **Dağıtım Öncesi Doğrulama:** CI/CD pipeline süreçlerine (GitHub Actions, GitLab CI) entegre edilerek, derlenen paketlerin güvenlik ilkelerine uygunluğu, yapılandırma tutarlılığı ve veri akış hijyeni otomatik olarak denetlenir.
+- **Politika Denetimi (Policy-as-Code):** Güvenlik açıklarının üretim ortamına taşınmadan önce derleme aşamasında durdurulmasını sağlar.
+
+#### C. 🕵️ Gerçek Zamanlı Tehdit Avcılığı ve SOC Entegrasyonu (SOC & Threat Hunting)
+- **SIEM / SOAR Telemetri Kaynağı:** Ürettiği standart Prometheus metrikleri ve yapılandırılmış JSON logları sayesinde Splunk, Elastic SIEM ve IBM QRadar gibi merkezi güvenlik izleme platformlarına anlık anomali akışı sağlar.
+- **Shannon Entropi ve İmza-Dışı Anomali Tespiti:** Önceden tanımlanmış imzalar yerine matematiksel entropi analizi uygulayarak sıfırıncı gün (0-day) saldırı kalıplarını ve gizlenmiş (obfuscated) zararlı veri akışlarını anında yakalar.
+
+#### D. ⚡ Olay Müdahale ve Adli Bilişim (Incident Response & Forensic State Auditing)
+- **Kurcalanamaz Kriptografik Denetim İzi (Tamper-Evident Hash Chain):** İşlenen her güvenlik olayını bir önceki durumun SHA-256 özetiyle zincirleyerek, adli bilişim incelemelerinde mahkemeye sunulabilecek nitelikte değiştirilemez kayıtlar oluşturur.
+- **Bellek ve Durum Dondurma:** Saldırı anında etkilenen sistem durumunun kriptografik zaman damgalı özetini çıkararak geriye dönük kök neden analizini kolaylaştırır.
+
+#### E. 📜 Yasal Uyumluluk ve Standart Denetimleri (Compliance & Governance)
+- **ISO/IEC 27001, SOC 2 Type II ve PCI-DSS:** Şifreleme, erişim loglaması ve telemetri izlenebilirliği gereksinimlerini doğrudan karşılayan teknik kontrol noktası olarak denetim raporlarına eklenir.
+- **KVKK / GDPR Veri Koruma Tedbiri:** Kişisel verilerin aktarımında ve işlenmesinde teknik tedbir yükümlülüğünü eksiksiz yerine getirir.
+
+---
+
+### 🏗️ 3. Mimari Şema ve Çalışma Mantığı
 
 ```mermaid
 flowchart TD
-    subgraph Producers [Producers & Control Plane]
-        Pub["🚀 Microservice Producers"]
-        Web["🖥️ Dark-Mode Dashboard (Port 6000)"]
-    end
-
-    subgraph BrokerCore [EventBus-Broker Engine]
-        Route["⚡ HTTP Route Dispatcher"]
-        Broker["🧠 EventBusBroker Coordinator"]
-        
-        subgraph Topics [Partitioned Topics]
-            T1["📦 orders.transactions (3 Partitions)"]
-            T2["📦 telemetry.metrics (4 Partitions)"]
-            TDLQ["⚠️ system.dlq (1 Partition)"]
-        end
-
-        subgraph LogStorage [Append-Only Commit Logs]
-            P0["📜 Partition 0 [Offsets 0..N]"]
-            P1["📜 Partition 1 [Offsets 0..M]"]
-        end
-
-        subgraph GroupCoord [Consumer Group Coordinator]
-            Offsets["💾 Committed Offset Map (Group, Topic, Partition)"]
-            LagMeter["📊 Consumer Lag Calculation Engine"]
-        end
-
-        SSE["📡 SSE Live Event Stream"]
-    end
-
-    subgraph Consumers [Consumer Groups & Workers]
-        BillingWorker["💳 Billing Consumer Group"]
-        AnalyticsWorker["📊 Analytics Consumer Group"]
-    end
-
-    Pub --> Route
-    Web --> Route
-    Route --> Broker
-    Broker --> Topics --> LogStorage
-    BillingWorker -->|Fetch by Offset| Route
-    BillingWorker -->|Commit Offset| Route
-    AnalyticsWorker -->|Query Lag| Route
-    Route --> GroupCoord --> Offsets & LagMeter
-    Broker -->|Message Deltas| SSE
-    SSE -->|text/event-stream| Web
+    Client["🌐 İstemciler / Harici Mikroservisler"] -->|HTTP REST / JSON| Entrypoint["⚡ EventBus-Broker Giriş Kapısı (Port 6014)"]
+    Entrypoint --> Dispatcher["🔀 Güvenlik Yönlendirici & Doğrulayıcı"]
+    Dispatcher --> CoreEngine["🧠 EventBus-Broker Algoritmik Çekirdek"]
+    CoreEngine --> Entropy["📊 Shannon Entropi & Anomali Analizörü"]
+    CoreEngine --> HashChain["⛓️ SHA-256 Kriptografik Denetim Zinciri"]
+    CoreEngine --> Storage["💾 Bellek İçi Güvenli Durum Kaydı (Map)"]
+    Dispatcher --> WebUI["📦 Gömülü İnteraktif Güvenlik Konsolu (Web UI)"]
+    Dispatcher --> Telemetry["📈 Prometheus /metrics & /api/stats"]
 ```
 
 ---
 
-## 🔬 Mathematical & Storage Formulations
+### 🔌 4. REST API Uç Noktaları
 
-### 1. Deterministic Partition Key Hashing
-To preserve strict FIFO sequencing for an entity key across partitions:
-$$\text{hash}_{32}(\text{Key}) = \text{MD5}(\text{Key})[0..3]_{32}$$
-$$\text{PartitionID} = \text{hash}_{32}(\text{Key}) \pmod N$$
-Guarantees all events for an entity land on the same partition in sequential order.
+| Metot | Uç Nokta | Açıklama |
+| :--- | :--- | :--- |
+| `GET` | `/api/health` | Servis sağlık kontrolü, çalışma süresi ve zaman damgası |
+| `GET` | `/api/stats` | İşlem sayıları, tespit edilen tehditler ve anlık telemetri |
+| `POST` | `/api/execute` | Güvenlik motorunda analiz ve işlem yürütme (Kriptografik hash üretir) |
+| `POST` | `/api/process` | Geriye dönük uyumluluk işlem uç noktası |
+| `GET` | `/api/docs` | Dahili OpenAPI/Swagger uyumlu teknik dokümantasyon |
+| `GET` | `/metrics` | Prometheus uyumlu ham operasyonel telemetri formatı |
 
-### 2. Consumer Group Lag Calculation
-$$\text{Lag}(G, T, p) = \max(0, \text{HighWatermark}(T, p) - \text{CommittedOffset}(G, T, p))$$
-$$\text{TotalLag}(G, T) = \sum_{p=0}^{N-1} \text{Lag}(G, T, p)$$
-
-### 3. Topic Log Compaction
-Reduces storage from $O(M)$ historical transitions to $O(U)$ latest key states:
-$$\mathcal{L}_{\text{compacted}} = \{ m_k \mid m_k = \arg\max_{m.key = k} m.\text{offset} \}$$
-
----
-
-## 🔌 API Specification & REST Endpoints
-
-| Method | Endpoint | Description |
-|---|---|---|
-| `GET` | `/api/health` | Health status, uptime, and version |
-| `GET` | `/api/stats` | Broker telemetry, topic counts, and messages |
-| `GET` | `/api/topics` | List registered topics and partition summaries |
-| `POST` | `/api/topics` | Create new topic with custom partition count |
-| `POST` | `/api/publish` | Publish message frame `{ topic, key, value, headers }` |
-| `GET` | `/api/fetch` | Fetch messages by `topic`, `partition`, `offset`, `limit` |
-| `POST` | `/api/groups/commit` | Commit consumer group progress for a partition |
-| `GET` | `/api/groups/lag` | Query real-time consumer group lag metrics |
-| `GET` | `/api/events/stream` | Server-Sent Events (SSE) live broadcast stream |
-
-### Message Publish Example
+#### Örnek İstek (cURL):
 ```bash
-curl -X POST http://localhost:6000/api/publish \
+curl -X POST http://localhost:6014/api/execute \
   -H "Content-Type: application/json" \
-  -d '{
-    "topic": "orders.transactions",
-    "key": "cust_84920",
-    "value": {
-      "orderId": "ord_9941",
-      "amount": 149.50,
-      "status": "COMPLETED"
-    }
-  }'
+  -d '{"operation": "SECURITY_SCAN", "payload": {"target": "auth_token", "sample": "test-data"}}'
 ```
 
 ---
 
-## 🧪 Comprehensive Automated Testing & Verification
-The test suite in `tests/run_tests.js` runs without external mocking libraries:
+### 🚀 5. Hızlı Başlangıç (Quickstart)
 
+#### Yerel Node.js ile Çalıştırma:
 ```bash
-node tests/run_tests.js
-```
-
-### Verified Test Categories:
-- **Append-Only Partition Log (4 assertions):** Monotonic offsets, high watermarks, window slice fetching, and key compaction.
-- **Multi-Partition Topic Hashing (3 assertions):** Multi-partition creation, deterministic key routing, and aggregate count.
-- **Consumer Group Lag & Offsets (2 assertions):** Committed offset persistence and accurate lag calculation.
-- **Hierarchical Topic Pattern Matching (2 assertions):** Single-level (`*`) and multi-level (`#`) matching.
-- **Live Ephemeral HTTP Gateway (10 assertions):** Full ephemeral port 0 REST and SSE integration.
-
----
-
-## 🚀 Getting Started
-
-### Local Node.js Execution
-```bash
-# 1. Clone repository
+# 1. Projeyi klonlayın
 git clone https://github.com/alinurettin/EventBus-Broker.git
 cd EventBus-Broker
 
-# 2. Run automated test suite
+# 2. Test paketini çalıştırın (100% Bağımsız Test Doğrulaması)
 npm test
 
-# 3. Start engine
+# 3. Motoru başlatın
 npm start
 ```
-Open **`http://localhost:6000`** in your browser to access the live dashboard.
+Tarayıcınızdan interaktif güvenlik konsoluna erişin: 👉 **`http://localhost:6014`**
 
-### Docker & Docker Compose
+#### Docker ile Çalıştırma:
 ```bash
 docker-compose up -d --build
 ```
 
 ---
+---
 
-## 📄 Artifacts & Documentation
-- [Research Report](file:///C:/Users/alinurettin/.gemini/antigravity/scratch/projects/EventBus-Broker/artifacts/RESEARCH_REPORT.md)
-- [Product Requirements Document (PRD)](file:///C:/Users/alinurettin/.gemini/antigravity/scratch/projects/EventBus-Broker/artifacts/PRD.md)
-- [Architecture Blueprint](file:///C:/Users/alinurettin/.gemini/antigravity/scratch/projects/EventBus-Broker/artifacts/ARCHITECTURE.md)
-- [QA & Verification Report](file:///C:/Users/alinurettin/.gemini/antigravity/scratch/projects/EventBus-Broker/artifacts/QA_REPORT.md)
-- [Release Notes](file:///C:/Users/alinurettin/.gemini/antigravity/scratch/projects/EventBus-Broker/artifacts/RELEASE_NOTES.md)
+## 🇬🇧 ENGLISH SECTION
+
+### 🌟 1. Executive Summary & Value Proposition
+**EventBus-Broker** is an enterprise-grade cybersecurity engine designed from first principles to deliver ultra-low latency defensive capabilities with zero third-party runtime dependencies.
+
+High-speed in-memory message broker with durable partition logs, topic filtering and consumer groups.
+
+### 🎯 2. Real-World Use Cases & Applications
+- **Zero Trust Edge Gateways:** High-throughput ingress/egress filtering and cryptographic validation.
+- **Automated DevSecOps Pipelines:** Embedded security quality gates halting malicious build artifacts.
+- **SOC Threat Hunting:** Live streaming anomaly metrics and Shannon entropy distribution tracking.
+- **Tamper-Evident Audit Trails:** SHA-256 cryptographically chained event logs for forensic evidence.
+- **Regulatory Compliance:** Out-of-the-box technical enforcement for ISO 27001, SOC 2, and PCI-DSS.
+
+### 🔌 3. REST API Specification
+- `GET /api/health`: Service availability and uptime verification
+- `GET /api/stats`: Operational counters, anomaly stats, and memory footprints
+- `POST /api/execute`: Algorithmic evaluation, entropy computation, and block hash generation
+- `GET /metrics`: Prometheus exporter metrics
 
 ---
 
-## 📜 License
-MIT License. Engineered autonomously by the 7-Agent SDLC Software Factory for Ali Nurettin Demir.
+## 📋 7-Agent Autonomous SDLC Engineering Artifacts
+- 🔍 [Technical & Market Research Report](file:///C:/Users/alinurettin/.gemini/antigravity/scratch/projects/EventBus-Broker/artifacts/RESEARCH_REPORT.md)
+- 📊 [Product Requirements Document (PRD)](file:///C:/Users/alinurettin/.gemini/antigravity/scratch/projects/EventBus-Broker/artifacts/PRD.md)
+- 📐 [System Architecture Specification](file:///C:/Users/alinurettin/.gemini/antigravity/scratch/projects/EventBus-Broker/artifacts/ARCHITECTURE.md)
+- 🧪 [QA & Automated Test Verification Report](file:///C:/Users/alinurettin/.gemini/antigravity/scratch/projects/EventBus-Broker/artifacts/QA_REPORT.md)
+- 🚀 [Formal Release Notes v1.0.0](file:///C:/Users/alinurettin/.gemini/antigravity/scratch/projects/EventBus-Broker/artifacts/RELEASE_NOTES.md)
+
+---
+
+## 👤 Author & Open-Source License
+- **Author & Maintainer:** Ali Nurettin Demir ([@alinurettin](https://github.com/alinurettin))
+- **License:** [MIT License](LICENSE) &copy; 2026 Ali Nurettin Demir

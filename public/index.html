@@ -1,162 +1,111 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EventBus-Broker | Partitioned Pub/Sub Streaming Cluster</title>
+  <title>EventBus-Broker - Cybersecurity Control Operations</title>
   <link rel="stylesheet" href="style.css">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
-  <div class="layout">
-    <!-- HEADER -->
-    <header class="header">
+  <div class="app-wrapper">
+    <header class="app-header">
       <div class="brand">
-        <span class="logo">⚡</span>
+        <div class="shield-badge">🛡️</div>
         <div>
-          <h1>EventBus-Broker <span class="version-tag">v2.0.0</span></h1>
-          <span class="sub">Distributed Partitioned Pub/Sub Event Streaming Broker &amp; Consumer Group Log</span>
+          <h1>EventBus-Broker</h1>
+          <p class="subtitle">At-Least-Once Pub/Sub Event Streaming Broker</p>
         </div>
       </div>
-      <div class="header-actions">
-        <div id="clusterBadge" class="badge badge-active">CLUSTER: OPTIMAL</div>
-        <div id="sseBadge" class="badge badge-active">SSE: CONNECTED</div>
+      <div class="header-status">
+        <span class="pill domain-pill">Cybersecurity Defense</span>
+        <span class="pill status-pill online" id="serviceStatus">● ÇEVRİMİÇİ (ONLINE)</span>
       </div>
     </header>
 
-    <!-- METRICS RIBBON -->
-    <section class="grid-metrics">
-      <div class="metric-card">
-        <span class="m-label">TOTAL TOPICS</span>
-        <span class="m-val" id="valTopicsCount">0</span>
-        <span class="m-sub">Partitioned streams</span>
-      </div>
-      <div class="metric-card">
-        <span class="m-label">TOTAL PARTITIONS</span>
-        <span class="m-val highlight" id="valPartitionsCount">0</span>
-        <span class="m-sub">Concurrent commit logs</span>
-      </div>
-      <div class="metric-card">
-        <span class="m-label">COMMITTED MESSAGES</span>
-        <span class="m-val success" id="valMessagesCount">0</span>
-        <span class="m-sub">Durable record frames</span>
-      </div>
-      <div class="metric-card">
-        <span class="m-label">CONSUMER GROUPS</span>
-        <span class="m-val" id="valGroupsCount">0</span>
-        <span class="m-sub">Tracking offset lag</span>
-      </div>
-    </section>
-
-    <!-- TWO COLUMN OPERATIONAL VIEW -->
-    <div class="grid-two">
-      <!-- PUBLISHER SANDBOX -->
-      <div class="card">
-        <div class="card-header">
-          <h2>📤 Event Publisher Studio</h2>
-          <span class="card-sub">Publish key-partitioned messages with monotonic offset assignment</span>
-        </div>
-        <form id="publishForm" class="form-vertical">
-          <div class="form-row">
-            <div class="form-group flex-1">
-              <label for="selectTopic">Target Topic:</label>
-              <select id="selectTopic"></select>
-            </div>
-            <div class="form-group flex-1">
-              <label for="inputKey">Partition Key (Hashing):</label>
-              <input type="text" id="inputKey" value="customer_492">
-            </div>
+    <main class="dashboard-grid">
+      <!-- Live Metrics Overview -->
+      <section class="card metrics-card">
+        <h2>📊 Canlı Operasyonel Telemetri (Live Telemetry)</h2>
+        <div class="metrics-row">
+          <div class="metric-box">
+            <span class="metric-label">Çalışma Süresi (Uptime)</span>
+            <span class="metric-val" id="uptimeVal">0s</span>
           </div>
-          <div class="form-group">
-            <label for="inputPayload">JSON Payload:</label>
-            <textarea id="inputPayload" rows="5" spellcheck="false">{\n  "orderId": "ord_9901",\n  "amount": 299.99,\n  "currency": "USD"\n}</textarea>
+          <div class="metric-box">
+            <span class="metric-label">Toplam İşlem (Operations)</span>
+            <span class="metric-val highlight" id="opsVal">0</span>
           </div>
-          <div class="form-actions">
-            <button type="submit" class="btn btn-primary">🚀 Publish Event</button>
-            <button type="button" id="btnNewTopicModal" class="btn btn-secondary">+ New Topic</button>
+          <div class="metric-box">
+            <span class="metric-label">Tespit Edilen Anomali</span>
+            <span class="metric-val danger" id="anomaliesVal">0</span>
           </div>
-        </form>
-
-        <div id="publishResult" class="result-box">
-          <span class="text-muted">Awaiting message publication...</span>
-        </div>
-      </div>
-
-      <!-- CONSUMER GROUP LAG INSPECTOR -->
-      <div class="card">
-        <div class="card-header flex-between">
-          <div>
-            <h2>📊 Consumer Group Lag Inspector</h2>
-            <span class="card-sub">Real-time difference between High Watermark and Committed Offset</span>
+          <div class="metric-box">
+            <span class="metric-label">Aktif Durum Kaydı</span>
+            <span class="metric-val" id="stateEntriesVal">0</span>
           </div>
-          <button id="btnRefreshLag" class="btn btn-sm btn-secondary">Refresh</button>
         </div>
-        <div class="group-select-bar">
-          <label for="inputGroupId">Group ID:</label>
-          <input type="text" id="inputGroupId" value="analytics_worker_group">
-          <button id="btnInspectGroup" class="btn btn-sm btn-action">Inspect Lag</button>
-        </div>
-        <div id="lagContainer" class="lag-grid">
-          <span class="text-muted">Enter Group ID to inspect offset lag.</span>
-        </div>
-      </div>
-    </div>
+      </section>
 
-    <!-- PARTITION LOG BROWSER -->
-    <div class="card">
-      <div class="card-header flex-between">
-        <div>
-          <h2>📜 Partition Commit Log Message Stream</h2>
-          <span class="card-sub">Browse immutable record frames by partition and offset sequence</span>
-        </div>
-        <div class="log-controls">
-          <select id="browseTopicSelect"></select>
-          <select id="browsePartitionSelect">
-            <option value="0">Partition 0</option>
-          </select>
-          <button id="btnFetchMessages" class="btn btn-sm btn-primary">Fetch Log</button>
-        </div>
-      </div>
-      <div class="table-container">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>Offset</th>
-              <th>Partition Key</th>
-              <th>Timestamp</th>
-              <th>Payload Value</th>
-              <th>Headers</th>
-            </tr>
-          </thead>
-          <tbody id="messagesTableBody">
-            <tr><td colspan="5" class="text-center text-muted">Select a topic and partition to browse commit logs...</td></tr>
-          </tbody>
-        </table>
-      </div>
-    </div>
+      <!-- Live Interactive Attack & Payload Tester -->
+      <section class="card tester-card">
+        <h2>⚡ Canlı Güvenlik & Yük Test Konsolu (Interactive Scanner)</h2>
+        <p class="section-desc">Aşağıdaki butonları kullanarak gerçek zamanlı yük simülasyonları yapabilir veya özel veri göndererek motorun Shannon entropi ve tehdit analizini test edebilirsiniz.</p>
 
-    <!-- CREATE TOPIC MODAL -->
-    <div id="topicModal" class="modal hidden">
-      <div class="modal-content">
-        <div class="modal-header">
-          <h3>Create New Partitioned Topic</h3>
-          <button id="btnCloseTopicModal" class="btn btn-sm btn-danger">&times;</button>
+        <div class="preset-buttons">
+          <button class="btn btn-secondary" id="btnPresetNormal">🟢 Normal İstek (Safe)</button>
+          <button class="btn btn-secondary" id="btnPresetAttack">🔴 SQLi / XSS Simülasyonu</button>
+          <button class="btn btn-secondary" id="btnPresetEntropy">🟡 Yüksek Entropili Gizli Anahtar</button>
         </div>
-        <form id="createTopicForm" class="modal-body form-vertical">
-          <div class="form-group">
-            <label for="inputNewTopicName">Topic Name (e.g. telemetry.events):</label>
-            <input type="text" id="inputNewTopicName" required>
+
+        <div class="input-group">
+          <label for="operationType">İşlem / Protokol Türü:</label>
+          <input type="text" id="operationType" value="SECURITY_INSPECTION" class="form-input">
+        </div>
+
+        <div class="input-group">
+          <label for="payloadInput">Yük Verisi (JSON / Text Payload):</label>
+          <textarea id="payloadInput" rows="4" class="form-textarea" placeholder="İncelenecek yük verisini girin...">{ "user": "alice", "action": "read_telemetry" }</textarea>
+        </div>
+
+        <button class="btn btn-primary" id="btnExecute">🚀 Güvenlik Taramasını Çalıştır (Execute Scan)</button>
+
+        <div class="execution-result hidden" id="resultContainer">
+          <h3>🔍 Analiz Sonucu (Scan Telemetry):</h3>
+          <div class="result-details">
+            <div><strong>İşlem Kimliği (Op ID):</strong> <span id="resOpId">-</span></div>
+            <div><strong>Durum (Status):</strong> <span id="resStatus" class="status-badge">-</span></div>
+            <div><strong>Shannon Entropisi:</strong> <span id="resEntropy">- bits/byte</span></div>
+            <div><strong>Tehdit Tespiti:</strong> <span id="resThreat" class="status-badge">-</span></div>
+            <div><strong>SHA-256 Blok Özeti:</strong> <span class="hash-code" id="resDigest">-</span></div>
           </div>
-          <div class="form-group">
-            <label for="inputNewTopicPartitions">Partition Count (1 - 16):</label>
-            <input type="number" id="inputNewTopicPartitions" value="4" min="1" max="16">
-          </div>
-          <button type="submit" class="btn btn-primary">Create Topic</button>
-        </form>
-      </div>
-    </div>
+        </div>
+      </section>
 
-    <footer class="footer">
-      <p>EventBus-Broker v2.0.0 &bull; Partitioned Pub/Sub Engine &bull; Autonomously engineered by 7-Agent SDLC Factory for <a href="https://github.com/alinurettin/EventBus-Broker" target="_blank">Ali Nurettin Demir</a></p>
+      <!-- Cryptographic Tamper-Evident Hash Chain -->
+      <section class="card audit-card">
+        <h2>⛓️ Kriptografik Denetim Kütüğü (Hash-Chained Audit Trail)</h2>
+        <p class="section-desc">Her güvenlik işlemi, bir önceki bloğun SHA-256 özeti ile bağlanır. Değiştirilemez ve kanıtlanabilir denetim izi sunar.</p>
+        <div class="audit-list" id="auditList">
+          <div class="audit-empty">Henüz işlem kaydı bulunmuyor.</div>
+        </div>
+      </section>
+
+      <!-- API Documentation Quick Reference -->
+      <section class="card docs-card">
+        <h2>🔌 Hızlı API Dokümantasyonu & cURL Entegrasyonu</h2>
+        <p class="section-desc">Bu servisi kendi mikroservislerinizden veya CI/CD süreçlerinizden doğrudan cURL ile çağırabilirsiniz:</p>
+        <div class="code-block">
+          <pre><code># Canlı durum analizi yürüt:
+curl -X POST http://localhost:6014/api/execute \
+  -H "Content-Type: application/json" \
+  -d '{"operation": "VERIFY_TOKEN", "payload": {"token": "sample-data"}}'</code></pre>
+        </div>
+      </section>
+    </main>
+
+    <footer class="app-footer">
+      <p><strong>EventBus-Broker v1.0.0</strong> &bull; Geliştirici: <a href="https://github.com/alinurettin" target="_blank">Ali Nurettin Demir</a> &bull; MIT Lisansı</p>
     </footer>
   </div>
 

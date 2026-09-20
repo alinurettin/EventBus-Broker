@@ -1,0 +1,12 @@
+﻿{
+  "name": "eventbus-broker",
+  "version": "1.0.0",
+  "description": "High-speed in-memory message broker with durable partition logs, topic filtering and consumer groups.",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "node tests/run_tests.js"
+  },
+  "author": "Ali Nurettin Demir",
+  "license": "MIT"
+}

@@ -45,15 +45,15 @@ All API endpoints accept and return JSON with standard CORS headers enabled.
 
 ### Endpoints
 - **`GET /api/health`**: Health status and uptime
-  ```ash
+  ```bash
   curl -X GET http://localhost:6000/api/health
   ```
 - **`GET /api/stats`**: Operational metrics and engine telemetry
-  ```ash
+  ```bash
   curl -X GET http://localhost:6000/api/stats
   ```
 - **`POST /api/process`**: Execute computational logic against engine
-  ```ash
+  ```bash
   curl -X POST http://localhost:6000/api/process  \
     -H "Content-Type: application/json" \
     -d '{"id": "task-1", "payload": "sample data"}'
@@ -68,7 +68,7 @@ This project includes an exhaustive, non-mocked automated test suite that valida
 3. **HTTP Integration:** Boots an ephemeral HTTP server, fires live requests, and asserts HTTP status codes (`200 OK`, `400 Bad Request`, `404 Not Found`).
 
 ### Running Tests
-```ash
+```bash
 npm test
 # or directly with Node:
 node tests/run_tests.js
@@ -81,7 +81,7 @@ All tests run in isolation and guarantee 100% assertions pass prior to release.
 ## 🚀 Getting Started & Quick Start
 
 ### Local Node.js Execution
-```ash
+```bash
 # 1. Clone the repository
 git clone https://github.com/alinurettin/EventBus-Broker.git
 cd EventBus-Broker
@@ -96,7 +96,7 @@ Access the live operational dashboard in your browser at:
 👉 **`http://localhost:6000`**
 
 ### Running with Docker & Docker Compose
-```ash
+```bash
 docker-compose up -d --build
 ```
 

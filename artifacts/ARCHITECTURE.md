@@ -1,4 +1,4 @@
-﻿# ğŸ“ System Architecture Document: EventBus-Broker
+﻿# 📐 System Architecture Document: EventBus-Broker
 - **Project:** EventBus-Broker
 - **Author:** Expert Software Architect
 - **Status:** APPROVED & COMPLETE

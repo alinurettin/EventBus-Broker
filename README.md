@@ -17,7 +17,7 @@ In modern software architectures, organizations struggle with bloated cloud depe
 
 ---
 
-## ğŸ—ï¸ System Architecture & Data Flow
+## 🏗️ System Architecture & Data Flow
 
 ```mermaid
 flowchart TD
@@ -31,7 +31,7 @@ flowchart TD
 
 ---
 
-## ğŸ¯ Key Architectural Features
+## 🎯 Key Architectural Features
 - **Zero External Dependencies:** Built with pure Node.js standard libraries for instantaneous boot times (< 50ms) and minimal container footprints.
 - **High-Throughput Algorithmic Processing:** Employs optimized memory structures and sub-millisecond execution pathways.
 - **Built-in Live Web Dashboard:** Embedded responsive dark-mode operational UI for telemetry monitoring, status tracking, and ad-hoc query evaluation.
@@ -54,8 +54,8 @@ All API endpoints accept and return JSON with standard CORS headers enabled.
   ```
 - **`POST /api/process`**: Execute computational logic against engine
   ```ash
-  curl -X POST http://localhost:6000/api/process \\
-    -H "Content-Type: application/json" \\
+  curl -X POST http://localhost:6000/api/process  \
+    -H "Content-Type: application/json" \
     -d '{"id": "task-1", "payload": "sample data"}'
   ```
 
@@ -106,7 +106,7 @@ docker-compose up -d --build
 
 | Variable | Default | Description |
 | :--- | :--- | :--- |
-| `PORT` | \6000\ | HTTP listening port for REST API and Web Dashboard |
+| `PORT` | `6000` | HTTP listening port for REST API and Web Dashboard |
 | `NODE_ENV` | `production` | Execution environment mode (`development`, `production`) |
 
 ---
@@ -115,7 +115,7 @@ docker-compose up -d --build
 This software system was designed, documented, implemented, and verified autonomously by the 7-Agent SDLC Team:
 - 🔍 [Technical & Market Research Report](file:///C:/Users/alinurettin/.gemini/antigravity/scratch/projects/EventBus-Broker/artifacts/RESEARCH_REPORT.md)
 - 📊 [Product Requirements Document (PRD)](file:///C:/Users/alinurettin/.gemini/antigravity/scratch/projects/EventBus-Broker/artifacts/PRD.md)
-- ğŸ“ [System Architecture Specification](file:///C:/Users/alinurettin/.gemini/antigravity/scratch/projects/EventBus-Broker/artifacts/ARCHITECTURE.md)
+- 📐 [System Architecture Specification](file:///C:/Users/alinurettin/.gemini/antigravity/scratch/projects/EventBus-Broker/artifacts/ARCHITECTURE.md)
 - 🧪 [QA & Automated Test Verification Report](file:///C:/Users/alinurettin/.gemini/antigravity/scratch/projects/EventBus-Broker/artifacts/QA_REPORT.md)
 - 🚀 [Formal Release Notes v1.0.0](file:///C:/Users/alinurettin/.gemini/antigravity/scratch/projects/EventBus-Broker/artifacts/RELEASE_NOTES.md)
 

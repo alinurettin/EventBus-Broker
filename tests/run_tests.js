@@ -45,7 +45,7 @@ const server = startServer(0, () => {
         console.log('✓ Integration POST /api/process Passed.');
 
         server.close(() => {
-          console.log('ğŸ‰ ALL TESTS PASSED (100% assertions verified).');
+          console.log('🎉 ALL TESTS PASSED (100% assertions verified).');
           process.exit(0);
         });
       });

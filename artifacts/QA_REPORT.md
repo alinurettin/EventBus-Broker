@@ -31,7 +31,7 @@ At C:\Users\alinurettin\.gemini\antigravity\scratch\projects\factory_daemon.ps1:
 (Use `node --trace-deprecation ...` to show where the warning was created)
 ✓ Integration Health Test Passed.
 ✓ Integration POST /api/process Passed.
-ğŸ‰ ALL TESTS PASSED (100% assertions verified).
+🎉 ALL TESTS PASSED (100% assertions verified).
 ```
 
 ---

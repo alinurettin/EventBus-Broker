@@ -1,36 +1,165 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EventBus-Broker | Operational Studio</title>
+  <title>EventBus-Broker | Partitioned Pub/Sub Streaming Cluster</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <header class="header">
-    <div class="brand">
-      <span class="logo">⚡</span>
-      <div>
-        <h1>EventBus-Broker</h1>
-        <span class="sub">At-Least-Once Pub/Sub Event Streaming Broker</span>
+  <div class="layout">
+    <!-- HEADER -->
+    <header class="header">
+      <div class="brand">
+        <span class="logo">⚡</span>
+        <div>
+          <h1>EventBus-Broker <span class="version-tag">v2.0.0</span></h1>
+          <span class="sub">Distributed Partitioned Pub/Sub Event Streaming Broker &amp; Consumer Group Log</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div id="clusterBadge" class="badge badge-active">CLUSTER: OPTIMAL</div>
+        <div id="sseBadge" class="badge badge-active">SSE: CONNECTED</div>
+      </div>
+    </header>
+
+    <!-- METRICS RIBBON -->
+    <section class="grid-metrics">
+      <div class="metric-card">
+        <span class="m-label">TOTAL TOPICS</span>
+        <span class="m-val" id="valTopicsCount">0</span>
+        <span class="m-sub">Partitioned streams</span>
+      </div>
+      <div class="metric-card">
+        <span class="m-label">TOTAL PARTITIONS</span>
+        <span class="m-val highlight" id="valPartitionsCount">0</span>
+        <span class="m-sub">Concurrent commit logs</span>
+      </div>
+      <div class="metric-card">
+        <span class="m-label">COMMITTED MESSAGES</span>
+        <span class="m-val success" id="valMessagesCount">0</span>
+        <span class="m-sub">Durable record frames</span>
+      </div>
+      <div class="metric-card">
+        <span class="m-label">CONSUMER GROUPS</span>
+        <span class="m-val" id="valGroupsCount">0</span>
+        <span class="m-sub">Tracking offset lag</span>
+      </div>
+    </section>
+
+    <!-- TWO COLUMN OPERATIONAL VIEW -->
+    <div class="grid-two">
+      <!-- PUBLISHER SANDBOX -->
+      <div class="card">
+        <div class="card-header">
+          <h2>📤 Event Publisher Studio</h2>
+          <span class="card-sub">Publish key-partitioned messages with monotonic offset assignment</span>
+        </div>
+        <form id="publishForm" class="form-vertical">
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label for="selectTopic">Target Topic:</label>
+              <select id="selectTopic"></select>
+            </div>
+            <div class="form-group flex-1">
+              <label for="inputKey">Partition Key (Hashing):</label>
+              <input type="text" id="inputKey" value="customer_492">
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="inputPayload">JSON Payload:</label>
+            <textarea id="inputPayload" rows="5" spellcheck="false">{\n  "orderId": "ord_9901",\n  "amount": 299.99,\n  "currency": "USD"\n}</textarea>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">🚀 Publish Event</button>
+            <button type="button" id="btnNewTopicModal" class="btn btn-secondary">+ New Topic</button>
+          </div>
+        </form>
+
+        <div id="publishResult" class="result-box">
+          <span class="text-muted">Awaiting message publication...</span>
+        </div>
+      </div>
+
+      <!-- CONSUMER GROUP LAG INSPECTOR -->
+      <div class="card">
+        <div class="card-header flex-between">
+          <div>
+            <h2>📊 Consumer Group Lag Inspector</h2>
+            <span class="card-sub">Real-time difference between High Watermark and Committed Offset</span>
+          </div>
+          <button id="btnRefreshLag" class="btn btn-sm btn-secondary">Refresh</button>
+        </div>
+        <div class="group-select-bar">
+          <label for="inputGroupId">Group ID:</label>
+          <input type="text" id="inputGroupId" value="analytics_worker_group">
+          <button id="btnInspectGroup" class="btn btn-sm btn-action">Inspect Lag</button>
+        </div>
+        <div id="lagContainer" class="lag-grid">
+          <span class="text-muted">Enter Group ID to inspect offset lag.</span>
+        </div>
       </div>
     </div>
-    <div class="status-badge">🟢 Operational Active</div>
-  </header>
-  <main class="main">
+
+    <!-- PARTITION LOG BROWSER -->
     <div class="card">
-      <h2>Engine Overview</h2>
-      <p>High-speed in-memory message broker with durable partition logs, topic filtering and consumer groups.</p>
-      <div class="metrics-row" id="metricsRow">
-        <div class="metric"><span class="lbl">STATUS</span><span class="val">HEALTHY</span></div>
-        <div class="metric"><span class="lbl">LATENCY</span><span class="val">1.2 ms</span></div>
-        <div class="metric"><span class="lbl">THROUGHPUT</span><span class="val">1,250 req/s</span></div>
+      <div class="card-header flex-between">
+        <div>
+          <h2>📜 Partition Commit Log Message Stream</h2>
+          <span class="card-sub">Browse immutable record frames by partition and offset sequence</span>
+        </div>
+        <div class="log-controls">
+          <select id="browseTopicSelect"></select>
+          <select id="browsePartitionSelect">
+            <option value="0">Partition 0</option>
+          </select>
+          <button id="btnFetchMessages" class="btn btn-sm btn-primary">Fetch Log</button>
+        </div>
+      </div>
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Offset</th>
+              <th>Partition Key</th>
+              <th>Timestamp</th>
+              <th>Payload Value</th>
+              <th>Headers</th>
+            </tr>
+          </thead>
+          <tbody id="messagesTableBody">
+            <tr><td colspan="5" class="text-center text-muted">Select a topic and partition to browse commit logs...</td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
-  </main>
-  <footer class="footer">
-    <p>EventBus-Broker &bull; Autonomously engineered by 7-Agent SDLC Factory for <a href="https://github.com/alinurettin/EventBus-Broker" target="_blank">Ali Nurettin Demir</a></p>
-  </footer>
+
+    <!-- CREATE TOPIC MODAL -->
+    <div id="topicModal" class="modal hidden">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3>Create New Partitioned Topic</h3>
+          <button id="btnCloseTopicModal" class="btn btn-sm btn-danger">&times;</button>
+        </div>
+        <form id="createTopicForm" class="modal-body form-vertical">
+          <div class="form-group">
+            <label for="inputNewTopicName">Topic Name (e.g. telemetry.events):</label>
+            <input type="text" id="inputNewTopicName" required>
+          </div>
+          <div class="form-group">
+            <label for="inputNewTopicPartitions">Partition Count (1 - 16):</label>
+            <input type="number" id="inputNewTopicPartitions" value="4" min="1" max="16">
+          </div>
+          <button type="submit" class="btn btn-primary">Create Topic</button>
+        </form>
+      </div>
+    </div>
+
+    <footer class="footer">
+      <p>EventBus-Broker v2.0.0 &bull; Partitioned Pub/Sub Engine &bull; Autonomously engineered by 7-Agent SDLC Factory for <a href="https://github.com/alinurettin/EventBus-Broker" target="_blank">Ali Nurettin Demir</a></p>
+    </footer>
+  </div>
+
   <script src="app.js"></script>
 </body>
 </html>
